@@ -15,7 +15,7 @@
 #include <stdio.h>
 #include <time.h>
 
-#define BUFFER_SIZE 256
+#define BUFFER_SIZE 64
 
 int main() {
     char buffer[BUFFER_SIZE];

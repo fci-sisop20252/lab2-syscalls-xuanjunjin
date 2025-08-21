@@ -114,38 +114,42 @@ Cada syscall (como read()) tem um custo computacional porque envolve a transiç�
 ```bash
 diff dados/origem.txt dados/destino.txt
 ```
-Resultado: [x] Idênticos [ ] Diferentes
+Resultado: [✓] Idênticos [ ] Diferentes
 
 ### 🔍 Análise
 
 **1. Por que devemos verificar que bytes_escritos == bytes_lidos?**
 
 ```
-[Sua análise aqui]
+É essencial garantir que o número de bytes escritos no arquivo destino seja exatamente igual ao número de bytes lidos do arquivo origem para assegurar que a cópia foi feita corretamente e integralmente. Caso bytes_escritos seja menor que bytes_lidos, parte dos dados não foi gravada, indicando erro ou interrupção na escrita, o que pode levar a arquivos corrompidos ou incompletos.
 ```
 
 **2. Que flags são essenciais no open() do destino?**
 
 ```
-[Sua análise aqui]
+As flags essenciais para o open() do arquivo destino são:
+- O_WRONLY (para abrir o arquivo em modo escrita)
+- O_CREAT (para criar o arquivo se ele não existir)
+- O_TRUNC (para truncar o arquivo existente e sobrescrevê-lo)
+Essas flags garantem que o arquivo destino seja aberto para escrita, criado se necessário e que não contenha dados antigos antes da cópia.
 ```
 
 **3. O número de reads e writes é igual? Por quê?**
 
 ```
-[Sua análise aqui]
+Sim, o número de chamadas read() e write() será igual, pois para cada leitura de um bloco de dados, há uma escrita correspondente. Cada bloco lido do arquivo origem deve ser escrito no arquivo destino, mantendo a mesma quantidade de operações. Diferenças podem ocorrer em casos especiais, como erros ou tratamento de buffers parciais.
 ```
 
 **4. Como você saberia se o disco ficou cheio?**
 
 ```
-[Sua análise aqui]
+Se o disco estiver cheio, a chamada write() retornará um valor menor que o número de bytes que tentou gravar, ou retornará -1 com errno setado para ENOSPC (No space left on device). Monitorando o valor de retorno das operações write() e os códigos de erro, o programa pode detectar que não há espaço suficiente no disco.
 ```
 
 **5. O que acontece se esquecer de fechar os arquivos?**
 
 ```
-[Sua análise aqui]
+Se os arquivos não forem fechados com close(), os buffers podem não ser liberados corretamente, o que pode levar a perda de dados ainda não escritos no disco (buffers em memória). Além disso, pode ocorrer vazamento de descritores de arquivos, esgotando o limite de arquivos abertos pelo processo, o que impede novas operações de I/O.
 ```
 
 ---
@@ -157,19 +161,20 @@ Resultado: [x] Idênticos [ ] Diferentes
 **1. Como as syscalls demonstram a transição usuário → kernel?**
 
 ```
-[Sua análise aqui]
+As syscalls representam a interface onde o processo em espaço usuário solicita serviços ao kernel, como acesso a arquivos, I/O e gerenciamento de recursos. Quando uma syscall é chamada, ocorre uma interrupção ou trap que troca o contexto para o modo kernel, permitindo acesso a recursos privilegiados, garantindo segurança e controle. Após a execução da operação, o controle retorna ao espaço usuário.
 ```
 
 **2. Qual é o seu entendimento sobre a importância dos file descriptors?**
 
 ```
-[Sua análise aqui]
+File descriptors são inteiros que representam arquivos abertos pelo processo, atuando como "pointers" abstratos para recursos de I/O gerenciados pelo kernel. Eles permitem manipular arquivos, pipes, sockets, etc., de forma uniforme, facilitando a leitura, escrita, fechamento e controle de arquivos. São essenciais para a organização e controle do acesso aos recursos do sistema.
 ```
 
 **3. Discorra sobre a relação entre o tamanho do buffer e performance:**
 
 ```
-[Sua análise aqui]
+O tamanho do buffer impacta diretamente a performance da cópia. Buffers muito pequenos aumentam o número de syscalls (read/write), gerando overhead de troca de contexto e lentidão. Buffers muito grandes podem consumir muita memória e causar gargalos em sistemas com pouca RAM. Um buffer balanceado melhora o throughput, reduzindo syscalls sem sobrecarregar recursos.
+
 ```
 
 ### ⚡ Comparação de Performance
@@ -180,12 +185,12 @@ time ./ex4_copia
 time cp dados/origem.txt dados/destino_cp.txt
 ```
 
-**Qual foi mais rápido?** _____
+**Qual foi mais rápido?** __cp___
 
 **Por que você acha que foi mais rápido?**
 
 ```
-[Sua análise aqui]
+O comando `cp` é uma ferramenta altamente otimizada, escrita para aproveitar melhor as chamadas de sistema, utilizar buffers ajustados dinamicamente e otimizações específicas do sistema de arquivos. Além disso, `cp` pode usar métodos avançados como mmap ou operações atômicas específicas para acelerar a cópia, enquanto o programa simples depende de uma implementação básica e buffer fixo.
 ```
 
 ---
