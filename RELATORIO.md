@@ -137,7 +137,7 @@ Essas flags garantem que o arquivo destino seja aberto para escrita, criado se n
 **3. O número de reads e writes é igual? Por quê?**
 
 ```
-Sim, o número de chamadas read() e write() será igual, pois para cada leitura de um bloco de dados, há uma escrita correspondente. Cada bloco lido do arquivo origem deve ser escrito no arquivo destino, mantendo a mesma quantidade de operações. Diferenças podem ocorrer em casos especiais, como erros ou tratamento de buffers parciais.
+Não necessariamente, mas em uma cópia simples com buffer fixo e sem erros, sim, o número de operações de read e write geralmente é igual, pois para cada leitura de um bloco de dados, há uma escrita correspondente. Cada bloco lido do arquivo origem deve ser escrito no arquivo destino, mantendo a mesma quantidade de operações. Diferenças podem ocorrer em casos especiais, como erros ou tratamento de buffers parciais.
 ```
 
 **4. Como você saberia se o disco ficou cheio?**
