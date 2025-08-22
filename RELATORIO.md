@@ -185,12 +185,14 @@ time ./ex4_copia
 time cp dados/origem.txt dados/destino_cp.txt
 ```
 
-**Qual foi mais rápido?** __cp___
+**Qual foi mais rápido?** __./ex4_copia___
 
 **Por que você acha que foi mais rápido?**
 
 ```
-O comando `cp` é uma ferramenta altamente otimizada, escrita para aproveitar melhor as chamadas de sistema, utilizar buffers ajustados dinamicamente e otimizações específicas do sistema de arquivos. Além disso, `cp` pode usar métodos avançados como mmap ou operações atômicas específicas para acelerar a cópia, enquanto o programa simples depende de uma implementação básica e buffer fixo.
+./ex4_copia foi mais rápido neste caso por ser uma implementação simples, direta e sem sobrecarga adicional.
+Para arquivos pequenos, essa leveza tem impacto.
+Para arquivos grandes ou cópias complexas, o cp tende a ser mais eficiente por usar otimizações internas (como sendfile() em alguns sistemas).
 ```
 
 ---
